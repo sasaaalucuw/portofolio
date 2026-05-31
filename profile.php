@@ -74,7 +74,7 @@ alt="profile"
 <div class="info-box">
 <h3>Pendidikan</h3>
 <p>
-<?php echo $data['pendidikan']; ?>
+<?php echo $data['pendidikan'] ?? 'D3 Teknologi Informasi'; ?>
 </p>
 </div>
 
