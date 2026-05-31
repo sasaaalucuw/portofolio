@@ -18,6 +18,28 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Default/Fallback data jika database tidak tersedia
+const DEFAULT_PROFILE = {
+  nama: 'Shafira Aini Saichu',
+  deskripsi: 'Mahasiswa D3 Teknologi Informasi yang memiliki minat pada UI/UX Design dan Web Development.',
+  pendidikan: 'D3',
+  universitas: 'Politeknik Harapan Bersama',
+  skill: 'HTML, CSS, JavaScript, React, Node.js, UI/UX Design',
+  email: 'shafira@example.com',
+  foto: 'profile.jpg'
+};
+
+const DEFAULT_PROJECTS = [
+  {
+    id: 1,
+    nama_project: 'Loading projects from database...',
+    deskripsi: 'Please check database connection',
+    code: 'Check environment variables',
+    link_project: '#',
+    gambar: 'project1.jpg'
+  }
+];
+
 // Database connection pool
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
@@ -53,52 +75,60 @@ async function getDbConnection() {
 app.get('/', async (req, res) => {
   try {
     const connection = await getDbConnection();
-    if (!connection) {
-      return res.status(500).send('Database connection failed');
+    let projects = DEFAULT_PROJECTS;
+    
+    if (connection) {
+      const [dbProjects] = await connection.query('SELECT * FROM project');
+      connection.release();
+      projects = dbProjects.length > 0 ? dbProjects : DEFAULT_PROJECTS;
+    } else {
+      console.warn('⚠️ Using fallback projects data');
     }
-
-    const [projects] = await connection.query('SELECT * FROM project');
-    connection.release();
 
     res.send(renderHome(projects));
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).send('Internal Server Error');
+    console.error('Route error:', error.message);
+    res.send(renderHome(DEFAULT_PROJECTS));
   }
 });
 
 app.get('/project', async (req, res) => {
   try {
     const connection = await getDbConnection();
-    if (!connection) {
-      return res.status(500).send('Database connection failed');
+    let projects = DEFAULT_PROJECTS;
+    
+    if (connection) {
+      const [dbProjects] = await connection.query('SELECT * FROM project');
+      connection.release();
+      projects = dbProjects.length > 0 ? dbProjects : DEFAULT_PROJECTS;
+    } else {
+      console.warn('⚠️ Using fallback projects data');
     }
-
-    const [projects] = await connection.query('SELECT * FROM project');
-    connection.release();
 
     res.send(renderProjects(projects));
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).send('Internal Server Error');
+    console.error('Route error:', error.message);
+    res.send(renderProjects(DEFAULT_PROJECTS));
   }
 });
 
 app.get('/profile', async (req, res) => {
   try {
     const connection = await getDbConnection();
-    if (!connection) {
-      return res.status(500).send('Database connection failed');
+    let profile = DEFAULT_PROFILE;
+    
+    if (connection) {
+      const [profileData] = await connection.query('SELECT * FROM profile LIMIT 1');
+      connection.release();
+      profile = profileData.length > 0 ? profileData[0] : DEFAULT_PROFILE;
+    } else {
+      console.warn('⚠️ Using fallback profile data');
     }
 
-    const [profileData] = await connection.query('SELECT * FROM profile LIMIT 1');
-    connection.release();
-
-    const profile = profileData[0] || {};
     res.send(renderProfile(profile));
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).send('Internal Server Error');
+    console.error('Route error:', error.message);
+    res.send(renderProfile(DEFAULT_PROFILE));
   }
 });
 
@@ -107,16 +137,16 @@ app.get('/api/projects', async (req, res) => {
   try {
     const connection = await getDbConnection();
     if (!connection) {
-      return res.status(500).json({ error: 'Database connection failed' });
+      return res.json(DEFAULT_PROJECTS);
     }
 
     const [projects] = await connection.query('SELECT * FROM project');
     connection.release();
 
-    res.json(projects);
+    res.json(projects.length > 0 ? projects : DEFAULT_PROJECTS);
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error('API Error:', error.message);
+    res.json(DEFAULT_PROJECTS);
   }
 });
 
@@ -124,24 +154,25 @@ app.get('/api/profile', async (req, res) => {
   try {
     const connection = await getDbConnection();
     if (!connection) {
-      return res.status(500).json({ error: 'Database connection failed' });
+      return res.json(DEFAULT_PROFILE);
     }
 
     const [profileData] = await connection.query('SELECT * FROM profile LIMIT 1');
     connection.release();
 
-    res.json(profileData[0] || {});
+    res.json(profileData.length > 0 ? profileData[0] : DEFAULT_PROFILE);
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error('API Error:', error.message);
+    res.json(DEFAULT_PROFILE);
   }
 });
 
 // HTML Template Functions
 function renderHome(projects) {
-  const projectsHtml = projects.map(p => `
+  const projectsList = projects && projects.length > 0 ? projects : DEFAULT_PROJECTS;
+  const projectsHtml = projectsList.map(p => `
     <div class="card" onclick="openModal('${escapeHtml(p.nama_project)}', '${escapeHtml(p.deskripsi)}', '${escapeHtml(p.code)}', '${p.link_project}', 'assets/${p.gambar}')">
-      <img src="assets/${p.gambar}" alt="project">
+      <img src="assets/${p.gambar}" alt="project" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22340%22 height=%22230%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22340%22 height=%22230%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2216%22 fill=%22%23999%22%3EImage not found%3C/text%3E%3C/svg%3E'">
       <div class="card-content">
         <h3>${escapeHtml(p.nama_project)}</h3>
         <p>${escapeHtml(p.deskripsi)}</p>
@@ -207,9 +238,10 @@ function renderHome(projects) {
 }
 
 function renderProjects(projects) {
-  const projectsHtml = projects.map(p => `
+  const projectsList = projects && projects.length > 0 ? projects : DEFAULT_PROJECTS;
+  const projectsHtml = projectsList.map(p => `
     <div class="card" onclick="openModal('${escapeHtml(p.nama_project)}', '${escapeHtml(p.deskripsi)}', '${escapeHtml(p.code)}', '${p.link_project}', 'assets/${p.gambar}')">
-      <img src="assets/${p.gambar}" alt="project">
+      <img src="assets/${p.gambar}" alt="project" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22340%22 height=%22230%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22340%22 height=%22230%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2216%22 fill=%22%23999%22%3EImage not found%3C/text%3E%3C/svg%3E'">
       <div class="card-content">
         <h3>${escapeHtml(p.nama_project)}</h3>
         <p>${escapeHtml(p.deskripsi)}</p>
@@ -265,33 +297,34 @@ function renderProjects(projects) {
 }
 
 function renderProfile(profile) {
+  const p = profile || DEFAULT_PROFILE;
   return getBaseHTML(`
     <section class="profile-page">
       <div class="profile-card">
-        <img src="assets/${profile.foto || 'default.jpg'}" alt="profile">
-        <h1>${escapeHtml(profile.nama || 'Nama Tidak Tersedia')}</h1>
-        <p class="desc">${escapeHtml(profile.deskripsi || '')}</p>
+        <img src="assets/${p.foto || 'profile.jpg'}" alt="profile" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22180%22 height=%22180%22%3E%3Crect fill=%22%23ccc%22 width=%22180%22 height=%22180%22/%3E%3C/svg%3E'">
+        <h1>${escapeHtml(p.nama || 'Nama Tidak Tersedia')}</h1>
+        <p class="desc">${escapeHtml(p.deskripsi || 'Deskripsi tidak tersedia')}</p>
 
         <div class="profile-info">
           <div class="info-box">
             <h3>Nama</h3>
-            <p>${escapeHtml(profile.nama || '-')}</p>
+            <p>${escapeHtml(p.nama || '-')}</p>
           </div>
           <div class="info-box">
             <h3>Pendidikan</h3>
-            <p>${escapeHtml(profile.pendidikan || '-')}</p>
+            <p>${escapeHtml(p.pendidikan || '-')}</p>
           </div>
           <div class="info-box">
             <h3>Universitas</h3>
-            <p>${escapeHtml(profile.universitas || '-')}</p>
+            <p>${escapeHtml(p.universitas || '-')}</p>
           </div>
           <div class="info-box">
             <h3>Skill</h3>
-            <p>${escapeHtml(profile.skill || '-')}</p>
+            <p>${escapeHtml(p.skill || '-')}</p>
           </div>
           <div class="info-box">
             <h3>Email</h3>
-            <p>${escapeHtml(profile.email || '-')}</p>
+            <p>${escapeHtml(p.email || '-')}</p>
           </div>
         </div>
       </div>
