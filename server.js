@@ -35,9 +35,16 @@ const pool = mysql.createPool({
 // Helper function untuk mendapatkan koneksi
 async function getDbConnection() {
   try {
-    return await pool.getConnection();
+    const connection = await pool.getConnection();
+    console.log('✅ Database connection successful');
+    return connection;
   } catch (error) {
-    console.error('Database connection error:', error);
+    console.error('❌ Database connection failed:', {
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      database: process.env.DB_NAME,
+      error: error.message
+    });
     return null;
   }
 }
@@ -337,5 +344,17 @@ function escapeHtml(text) {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`
+╔═══════════════════════════════════════╗
+║  🚀 Server Running                     ║
+╠═══════════════════════════════════════╣
+║  URL: http://localhost:${PORT}             ║
+║  Node: ${process.version}                 ║
+║  Env: ${process.env.NODE_ENV || 'development'}           ║
+║                                       ║
+║  Database Config:                     ║
+║  Host: ${process.env.DB_HOST || 'localhost'}    ║
+║  Database: ${process.env.DB_NAME || 'portofolio'}        ║
+╚═══════════════════════════════════════╝
+  `);
 });
