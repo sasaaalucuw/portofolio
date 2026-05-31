@@ -405,6 +405,17 @@ function escapeHtml(text) {
   return text.replace(/[&<>"']/g, m => map[m]);
 }
 
+// Catch-all route - redirect semua path yang tidak dikenal ke home
+app.use((req, res) => {
+  // Jika path dimulai dengan /api atau sudah ditangani, jangan redirect
+  if (req.path.startsWith('/api') || req.path.startsWith('/.')) {
+    res.status(404).json({ error: 'Not Found' });
+    return;
+  }
+  // Redirect semua path lain ke home
+  res.redirect('/');
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`
