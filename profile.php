@@ -50,7 +50,7 @@ $data = mysqli_fetch_assoc($query);
 <div class="profile-card">
 
 <img
-src="assets/<?php echo $data['foto']; ?>"
+src="assets/<?php echo $data['foto'] ?? 'backgroundhome.jpeg'; ?>"
 alt="profile"
 >
 
@@ -105,7 +105,12 @@ alt="profile"
 <?php echo $data['domisili']; ?>
 </p>
 </div>
-
+<div class="info-box">
+<h3>Domisili</h3>
+<p>
+<?php echo $data['domisili'] ?? 'Malang, Jawa Timur'; ?>
+</p>
+</div>
 </div>
 
 </div>

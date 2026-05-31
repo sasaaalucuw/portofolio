@@ -27,7 +27,8 @@ const DEFAULT_PROFILE = {
   universitas: 'Politeknik Harapan Bersama',
   skill: 'HTML, CSS, JavaScript, React, Node.js, UI/UX Design',
   email: 'shafira@example.com',
-  foto: 'profile.jpg'
+  domisili: 'Malang, Jawa Timur',
+  foto: 'backgroundhome.jpeg'
 };
 
 const DEFAULT_PROJECTS = [
@@ -326,7 +327,7 @@ function renderProfile(profile) {
   return getBaseHTML(`
     <section class="profile-page">
       <div class="profile-card">
-        <img src="assets/${p.foto || 'profile.jpg'}" alt="profile" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22180%22 height=%22180%22%3E%3Crect fill=%22%23ccc%22 width=%22180%22 height=%22180%22/%3E%3C/svg%3E'">
+        <img src="assets/${p.foto || 'backgroundhome.jpeg'}" alt="profile" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22180%22 height=%22180%22%3E%3Crect fill=%22%23ccc%22 width=%22180%22 height=%22180%22/%3E%3C/svg%3E'">
         <h1>${escapeHtml(p.nama || 'Nama Tidak Tersedia')}</h1>
         <p class="desc">${escapeHtml(p.deskripsi || 'Deskripsi tidak tersedia')}</p>
 
@@ -350,6 +351,10 @@ function renderProfile(profile) {
           <div class="info-box">
             <h3>Email</h3>
             <p>${escapeHtml(p.email || '-')}</p>
+          </div>
+          <div class="info-box">
+            <h3>Domisili</h3>
+            <p>${escapeHtml(p.domisili || '-')}</p>
           </div>
         </div>
       </div>
