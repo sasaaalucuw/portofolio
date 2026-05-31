@@ -81,7 +81,7 @@ alt="profile"
 <div class="info-box">
 <h3>Universitas</h3>
 <p>
-<?php echo $data['universitas']; ?>
+<?php echo $data['universitas'] ?? 'Universitas Brawijaya'; ?>
 </p>
 </div>
 
@@ -95,7 +95,7 @@ alt="profile"
 <div class="info-box">
 <h3>Email</h3>
 <p>
-<?php echo $data['email']; ?>
+<?php echo $data['email'] ?? 'shafirasaichu@student.ub.ac.id'; ?>
 </p>
 </div>
 
