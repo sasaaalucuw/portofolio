@@ -26,7 +26,10 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME || 'portofolio',
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelayMs: 0,
+  ssl: process.env.DB_HOST && process.env.DB_HOST.includes('planetscale') ? 'required' : false
 });
 
 // Helper function untuk mendapatkan koneksi
