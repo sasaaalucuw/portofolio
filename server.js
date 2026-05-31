@@ -17,6 +17,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'assets')));
 
 // Default/Fallback data jika database tidak tersedia
 const DEFAULT_PROFILE = {
@@ -36,7 +37,7 @@ const DEFAULT_PROJECTS = [
     deskripsi: 'Website marketplace untuk barang kos berbasis Laravel yang memiliki fitur upload produk, transaksi, manajemen user, upload produk, dan sistem pembayaran',
     code: 'Laravel, MySQL, Bootstrap',
     link_project: 'https://www.figma.com/proto/xusduNkkAu10xIV7XViwY1/wireframe-IMK--Copy-?node-id=0-4506&starting-point-node-id=0%3A4736&t=luvZTWkrXliOvsAk-1',
-    gambar: 'barkos.jpg'
+    gambar: 'barkos.jpeg'
   },
   {
     id: 2,
@@ -44,7 +45,7 @@ const DEFAULT_PROJECTS = [
     deskripsi: 'Project monitoring kipas otomatis berbasis ESP32 yang dapat dimonitor melalui website secara realtime menggunakan MQTT dan Mysql',
     code: 'ESP32, MQTT, Node.js, MySQL',
     link_project: 'https://smartfan.my.id/',
-    gambar: 'smartfan.jpg'
+    gambar: 'smartfan.jpeg'
   },
   {
     id: 3,
@@ -52,7 +53,7 @@ const DEFAULT_PROJECTS = [
     deskripsi: 'Aplikasi enkripsi menggunakan algoritma 3DES',
     code: 'JavaScript, 3DES Algorithm',
     link_project: 'https://kelompok1-3des.my.id',
-    gambar: '3des.jpg'
+    gambar: '3des.jpeg'
   },
   {
     id: 4,
@@ -60,7 +61,7 @@ const DEFAULT_PROJECTS = [
     deskripsi: 'Website Sadikin Project yang menampilkan informasi mengenai gallery Sadikin dengan tampilan modern serta mempermudah informasi terkait course dan lukisan.',
     code: 'HTML, CSS, JavaScript, PHP',
     link_project: 'https://github.com/alisyaauraf/sadikinpardgallery',
-    gambar: 'sadikin.jpg'
+    gambar: 'sadikin.jpeg'
   }
 ];
 
