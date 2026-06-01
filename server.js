@@ -25,7 +25,7 @@ const DEFAULT_PROFILE = {
   deskripsi: 'Mahasiswa D3 Teknologi Informasi yang memiliki minat pada UI/UX Design dan Web Development.',
   pendidikan: 'D3 Teknologi Informasi',
   universitas: 'Universitas Brawijaya',
-  skill: 'HTML, CSS, JavaScript, React, Node.js, UI/UX Design',
+  skill: 'HTML, CSS, JavaScript, Node.js, UI/UX Design',
   email: 'shafirasaichu@student.ub.ac.id',
   domisili: 'Malang, Jawa Timur',
   foto: 'backgroundhome.jpeg'
